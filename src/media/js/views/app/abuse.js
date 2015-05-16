@@ -12,17 +12,25 @@ define('views/app/abuse',
         var slug = $this.find('input[name=app]').val();
         var data = utils.getVars($this.serialize());
 
-        forms.toggleSubmitFormState($this);
+         if(data.text.trim().length > 0)
+        {
+            forms.toggleSubmitFormState($this);
 
-        requests.post(urls.api.url('app_abuse'), data).done(function(data) {
-            notify({message: gettext('Abuse report submitted. Thanks!')});
-            if (!caps.widescreen()) {
-                z.page.trigger('navigate', urls.reverse('app', [slug]));
-            }
-        }).fail(function() {
-            forms.toggleSubmitFormState($this, true);
-            notify({message: gettext('There was an issue submitting your abuse report. Please try again later.')});
-        });
+            requests.post(urls.api.url('app_abuse'), data).done(function(data) {
+                notify({message: gettext('Abuse report submitted. Thanks!')});
+                if (!caps.widescreen()) {
+                    z.page.trigger('navigate', urls.reverse('app', [slug]));
+                }
+            }).fail(function() {
+                forms.toggleSubmitFormState($this, true);
+                notify({message: gettext('There was an issue submitting your abuse report. Please try again later.')});
+            });
+        }
+        else
+        {
+            notify({message: gettext('Abuse report is empty!')});
+
+        }
     }));
 
     z.body.on('click', '.app-report-abuse .button', function(e) {
